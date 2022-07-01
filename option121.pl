@@ -8,7 +8,15 @@ use Data::Dumper;
 use utf8;
 binmode STDOUT, ':encoding(utf8)';
 
-my $separator = ',';
+# 機種選択
+my $model = 'CISCO';
+
+my %sep = (
+	'IX' => '',
+	'YAMAHA' => ',',
+	'CISCO' => ':',
+);
+my $separator = $sep{$model};
 my $route = '';
 my ($network, $mask, $gateway);
 
@@ -33,7 +41,10 @@ while (<DATA>){
 }
 
 $route =~ s/^$separator//;
-printf "\n\n%s\n", $route;
+if    ($model =~ /ix/i)		{ printf "\n\noption 249 hex %s\n", $route }
+elsif ($model =~ /yamaha/i)	{ printf "\n\ndhcp scope option 1 249=%s\n", $route }
+elsif ($model =~ /cisco/i)	{ printf "\n\noption 121 hex %s\n", $route }
+
 
 # $_[0] : IP addr
 # $_[1] : IP mask bits
